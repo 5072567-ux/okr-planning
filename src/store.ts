@@ -83,7 +83,7 @@ const mockTasks: Task[] = [
     title: 'Составить детальное оглавление пособия',
     sprintId: 's1',
     keyResultId: 'kr1',
-    status: 'Done',
+    status: 'DONE',
     impact: 'High',
     effort: 'Medium',
     pomodoroEstimate: 4,
@@ -94,7 +94,7 @@ const mockTasks: Task[] = [
     title: 'Написать черновик введения (2000 слов)',
     sprintId: 's1',
     keyResultId: 'kr1',
-    status: 'In Progress',
+    status: 'DOING',
     impact: 'High',
     effort: 'Large',
     pomodoroEstimate: 8,
@@ -105,7 +105,7 @@ const mockTasks: Task[] = [
     title: 'Исследовать 3 платформы для размещения цифрового продукта',
     sprintId: 's1',
     keyResultId: 'kr2',
-    status: 'Todo',
+    status: 'TODO',
     impact: 'Medium',
     effort: 'Small',
     pomodoroEstimate: 2,
@@ -143,6 +143,11 @@ function validateImportedData(value: unknown): ImportedData {
   }
   if (imported.tasks.some((item) => !sprintIds.has(item.sprintId) || !keyResultIds.has(item.keyResultId))) {
     throw new Error('В данных есть задача с несуществующим спринтом или ключевым результатом.');
+  }
+
+  const validTaskStatuses = ['TODO', 'DOING', 'DONE', 'TO DISCUSS'];
+  if (imported.tasks.some((item) => !validTaskStatuses.includes(item.status))) {
+    throw new Error('В данных есть задача с неизвестным статусом.');
   }
 
   return imported;
@@ -235,6 +240,30 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'okr-tree-storage',
+      version: 1,
+      migrate: (persistedState, version) => {
+        if (version === 0 && persistedState && typeof persistedState === 'object') {
+          const legacy = persistedState as Partial<AppState>;
+          const statusMap: Record<string, Task['status']> = {
+            Todo: 'TODO',
+            'In Progress': 'DOING',
+            Done: 'DONE',
+          };
+          return {
+            ...legacy,
+            tasks: Array.isArray(legacy.tasks)
+              ? legacy.tasks.map((task) => ({
+                  ...task,
+                  status: statusMap[String(task.status)] || task.status,
+                }))
+              : [],
+            keyResults: Array.isArray(legacy.keyResults)
+              ? legacy.keyResults.map((kr) => ({ ...kr }))
+              : [],
+          };
+        }
+        return persistedState as AppState;
+      },
     }
   )
 );
