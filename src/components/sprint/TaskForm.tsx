@@ -28,7 +28,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ sprintId, onSuccess }) => {
       title,
       sprintId,
       keyResultId,
-      status: 'Todo',
+      status: 'TODO',
       impact,
       effort,
       pomodoroEstimate,
