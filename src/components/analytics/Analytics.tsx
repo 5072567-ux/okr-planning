@@ -25,39 +25,31 @@ const Analytics: React.FC = () => {
     });
   }, [keyResults, objectives]);
 
-  // Данные для burndown chart активного спринта
+  // Burndown: идеальная траектория и фактический остаток на текущую дату.
+  // Исторических снимков статусов в модели нет, поэтому промежуточные фактические точки не выдумываем.
   const burndownData = useMemo(() => {
-    const activeSprint = sprints.find(s => s.status === 'Active') || sprints[0];
+    const activeSprint = sprints.find((s) => s.status === 'Active') || sprints[0];
     if (!activeSprint) return [];
 
-    const sprintTasks = tasks.filter(t => t.sprintId === activeSprint.id);
+    const sprintTasks = tasks.filter((task) => task.sprintId === activeSprint.id);
     const totalTasks = sprintTasks.length;
-    const startDate = new Date(activeSprint.startDate);
-    const endDate = new Date(activeSprint.endDate);
-    const totalDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-    
-    if (totalDays === 0) return [];
+    const startDate = new Date(`${activeSprint.startDate}T00:00:00`);
+    const endDate = new Date(`${activeSprint.endDate}T00:00:00`);
+    const totalDays = Math.round((endDate.getTime() - startDate.getTime()) / 86400000);
 
-    const idealBurndown = Array.from({ length: totalDays + 1 }, (_, i) => ({
-      day: i,
-      ideal: Math.round(totalTasks * (1 - i / totalDays)),
-      actual: i === 0 ? totalTasks : null,
+    if (!Number.isFinite(totalDays) || totalDays <= 0) return [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const elapsedDays = Math.floor((today.getTime() - startDate.getTime()) / 86400000);
+    const currentDay = Math.max(0, Math.min(totalDays, elapsedDays));
+    const remainingTasks = sprintTasks.filter((task) => task.status !== 'Done').length;
+
+    return Array.from({ length: totalDays + 1 }, (_, day) => ({
+      day,
+      ideal: Math.round(totalTasks * (1 - day / totalDays)),
+      actual: day === currentDay ? remainingTasks : null,
     }));
-
-    // Подсчет выполненных задач по дням (упрощенно — распределяем равномерно)
-    const doneTasks = sprintTasks.filter(t => t.status === 'Done').length;
-    const daysPassed = Math.min(
-      totalDays,
-      Math.ceil((new Date().getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
-    );
-
-    return idealBurndown.map((item, index) => {
-      if (index <= daysPassed && index > 0) {
-        const tasksDoneByDay = Math.round((doneTasks / daysPassed) * index);
-        return { ...item, actual: totalTasks - tasksDoneByDay };
-      }
-      return item;
-    });
   }, [sprints, tasks]);
 
   // Общая статистика
@@ -193,7 +185,6 @@ const Analytics: React.FC = () => {
                 stroke="#10b981" 
                 strokeWidth={2}
                 name="Фактический burndown"
-                connectNulls
               />
             </LineChart>
           </ResponsiveContainer>
