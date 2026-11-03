@@ -27,12 +27,12 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult
     : aggregatedProgress >= 40 ? 'text-amber-600' : 'text-red-600';
 
   return (
-    <div className="border-l-4 border-indigo-400 bg-gradient-to-r from-indigo-50/30 to-transparent rounded-r-lg pl-4 pr-2 py-3">
+    <div className="rounded-xl border border-[#e7ebe7] bg-white p-4 sm:p-5 shadow-[0_1px_5px_rgba(25,45,54,.025)]">
       {/* Заголовок цели */}
       <div className="flex items-start gap-3">
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="mt-1 text-gray-500 hover:text-indigo-600 transition-colors"
+          className="mt-1 text-[#849096] hover:text-[#31576a] transition-colors"
         >
           {isExpanded ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
         </button>
@@ -42,7 +42,7 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult
             <div className="flex items-start gap-2 flex-1">
               <Target size={18} className="text-indigo-600 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <h4 className="font-semibold text-gray-900 leading-snug">{objective.title}</h4>
+                <h4 className="font-semibold text-[#202a32] leading-snug">{objective.title}</h4>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-gray-500">{objective.timeframe}</span>
                   <Badge type="status" value={objective.status} />
@@ -58,18 +58,18 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult
           </div>
 
           {/* Драйвер: Факт + Потребность */}
-          <div className="bg-white/70 rounded-lg p-3 mb-3 border border-indigo-100">
+          <div className="grid grid-cols-1 gap-3 rounded-xl border border-[#e8ece8] bg-[#f8f9f6] p-3.5 mb-3 md:grid-cols-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
                   <Lightbulb size={13} className="text-amber-500" />
                   <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Факт</span>
                 </div>
-                <p className="text-xs text-gray-600 leading-relaxed">{objective.driverFact}</p>
+                <p className="text-xs text-[#5f6d73] leading-relaxed">{objective.driverFact}</p>
               </div>
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
-                  <TrendingUp size={13} className="text-emerald-500" />
+                  <TrendingUp size={13} className="text-[#527b68]" />
                   <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Потребность</span>
                 </div>
                 <p className="text-xs text-gray-600 leading-relaxed">{objective.driverNeed}</p>
@@ -84,10 +84,10 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult
 
       {/* Раскрытые Key Results */}
       {isExpanded && (
-        <div className="mt-3 ml-9 space-y-2">
+        <div className="mt-4 ml-7 space-y-2 border-l border-[#e6ebe7] pl-4">
           <button
             onClick={() => onAddKeyResult(objective.id)}
-            className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-800"
+            className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-[#123b53]"
           >
             <Plus size={14} /> Добавить ключевой результат
           </button>
