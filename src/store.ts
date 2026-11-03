@@ -20,16 +20,17 @@ const mockPrinciples = [
   }
 ];
 
-const mockObjectives = [
+const mockObjectives: Objective[] = [
   {
-    id: 'o1',
-    title: 'Создать и опубликовать фундаментальное методическое пособие',
-    timeframe: '2026 Q1-Q2',
-    status: 'Active',
-    driverFact: 'Накоплен уникальный практический опыт работы с целевой аудиторией, но он фрагментирован.',
-    driverNeed: 'Систематизировать знания в единый продукт для повышения экспертности и охвата.',
-    principleId: 'p1'
+    id: '1',
+    title: '...',
+    timeframe: '...',
+    status: 'active',
+    driverFact: '...',
+    driverNeed: '...',
+    principleId: '1',
   },
+];
   {
     id: 'o2',
     title: 'Диверсифицировать источники дохода и сформировать капитал',
