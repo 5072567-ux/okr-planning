@@ -25,7 +25,12 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult
 
   const aggregatedProgress = useMemo(() => {
     if (keyResults.length === 0) return 0;
-    const sum = keyResults.reduce((acc, kr) => acc + kr.progressPercent, 0);
+    const sum = keyResults.reduce((acc, kr) => {
+      const progress = Number.isFinite(kr.currentValue) && Number.isFinite(kr.targetValue) && kr.targetValue > 0
+        ? Math.max(0, Math.min(100, (kr.currentValue / kr.targetValue) * 100))
+        : 0;
+      return acc + progress;
+    }, 0);
     return Math.round(sum / keyResults.length);
   }, [keyResults]);
 
