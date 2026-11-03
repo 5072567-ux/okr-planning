@@ -6,6 +6,7 @@ export type LifeSphere = (typeof LIFE_SPHERES)[number];
 export type ImpactLevel = 'High' | 'Medium' | 'Low';
 export type EffortLevel = 'Small' | 'Medium' | 'Large';
 export type EntityStatus = 'Active' | 'Completed' | 'Archived';
+export type KeyResultStatus = 'В работе' | 'Ожидает' | 'Завершен';
 
 export interface Principle {
   id: string;
@@ -34,6 +35,7 @@ export interface KeyResult {
   startDate: string;
   endDate: string;
   progressPercent: number; // Вычисляется на основе текущего и целевого значения
+  status?: KeyResultStatus; // Необязательное для совместимости со старыми данными
   sphere?: LifeSphere; // Необязательное только для совместимости со старыми данными
 }
 
@@ -74,6 +76,7 @@ export interface AppState {
 
   // Действия для ключевых результатов (автопересчет прогресса)
   updateKeyResultValue: (id: string, newValue: number) => void;
+  updateKeyResultStatus: (id: string, status: KeyResultStatus) => void;
 
   // Глобальные действия
   exportData: () => string;
