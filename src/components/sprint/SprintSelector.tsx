@@ -15,7 +15,7 @@ const SprintSelector: React.FC<SprintSelectorProps> = ({ activeSprintId, onSelec
 
   if (sprints.length === 0) {
     return (
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm text-amber-800">
+      <div className="bg-[#f8f4eb] border border-[#eee4d1] rounded-xl p-4 text-sm text-[#80663a]">
         Нет активных спринтов. Создайте первый спринт, чтобы начать операционную работу.
       </div>
     );
@@ -31,14 +31,14 @@ const SprintSelector: React.FC<SprintSelectorProps> = ({ activeSprintId, onSelec
             onClick={() => onSelect(sprint.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
               isActive
-                ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
-                : 'bg-white text-gray-700 border-gray-200 hover:border-indigo-300 hover:bg-indigo-50'
+                ? 'bg-[#123b53] text-white border-[#123b53] shadow-sm'
+                : 'bg-white text-[#53636b] border-[#e5e8e4] hover:border-[#b7c8ce] hover:bg-[#f5f8f7]'
             }`}
           >
-            <Zap size={16} className={isActive ? 'text-amber-300' : 'text-amber-500'} />
+            <Zap size={16} className={isActive ? 'text-[#e4cfaa]' : 'text-[#b18b4a]'} />
             <div className="text-left">
               <div className="text-sm font-semibold">{sprint.name}</div>
-              <div className={`text-xs flex items-center gap-1 ${isActive ? 'text-indigo-100' : 'text-gray-500'}`}>
+              <div className={`text-xs flex items-center gap-1 ${isActive ? 'text-[#dce7eb]' : 'text-[#849096]'}`}>
                 <Calendar size={11} />
                 {new Date(sprint.startDate).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })}
                 {' → '}
