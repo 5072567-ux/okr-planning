@@ -45,13 +45,14 @@ const Dashboard: React.FC = () => {
       {/* Заголовок и статистика */}
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div><p className="eyebrow mb-2">Личная система управления</p><h1 className="text-3xl font-semibold tracking-tight text-[#202a32] flex items-center gap-3">
+          <p className="eyebrow mb-2">Личная система управления</p><h1 className="text-3xl font-semibold tracking-tight text-[#202a32] flex items-center gap-3">
             <span className="inline-flex rounded-2xl bg-[#eaf0f3] p-2.5"><TreePine className="text-[#31576a]" size={23} /></span>
             Дерево целей
           </h1>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[#737d83]">
             Иерархическая система планирования: от принципов к задачам
-          </p></div>
+          </p>
+        </div>
         <Button size="lg" onClick={() => setModalType('principle')}>
           <TreePine size={16} className="mr-2" />
           Новый принцип
