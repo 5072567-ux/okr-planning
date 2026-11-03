@@ -1,6 +1,8 @@
 // types.ts
 
-export type TaskStatus = 'Todo' | 'In Progress' | 'Done';
+export type TaskStatus = 'TODO' | 'DOING' | 'DONE' | 'TO DISCUSS';
+export const LIFE_SPHERES = ['УПР. ЖИЗНЬЮ', 'ЗДОРОВЬЕ', 'СЕМЬЯ', 'САМОРЕАЛИЗАЦИЯ', 'ФИНАНСЫ'] as const;
+export type LifeSphere = (typeof LIFE_SPHERES)[number];
 export type ImpactLevel = 'High' | 'Medium' | 'Low';
 export type EffortLevel = 'Small' | 'Medium' | 'Large';
 export type EntityStatus = 'Active' | 'Completed' | 'Archived';
@@ -31,7 +33,8 @@ export interface KeyResult {
   unit: string; // например, "глав", "часов", "руб."
   startDate: string;
   endDate: string;
-  progressPercent: number; // Вычисляется или задается вручную
+  progressPercent: number; // Вычисляется на основе текущего и целевого значения
+  sphere?: LifeSphere; // Необязательное только для совместимости со старыми данными
 }
 
 export interface Sprint {
