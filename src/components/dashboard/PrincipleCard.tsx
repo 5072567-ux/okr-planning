@@ -55,7 +55,7 @@ const PrincipleCard: React.FC<PrincipleCardProps> = ({ principle, onAddObjective
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-start gap-3 w-full text-left"
       >
-        <div className="p-2 bg-indigo-100 rounded-xl flex-shrink-0">
+        <div className="p-2 bg-[#eaf0f3] rounded-xl flex-shrink-0">
           <TreePine size={22} className="text-[#31576a]" />
         </div>
         <div className="flex-1">
@@ -68,8 +68,8 @@ const PrincipleCard: React.FC<PrincipleCardProps> = ({ principle, onAddObjective
         </div>
         <div className="flex items-center gap-3 flex-shrink-0">
           <div className="text-right">
-            <div className="text-3xl font-bold text-indigo-700">{aggregatedProgress}%</div>
-            <div className="text-xs text-gray-500">корень</div>
+            <div className="text-3xl font-bold text-[#31576a]">{aggregatedProgress}%</div>
+            <div className="text-xs text-[#849096]">корень</div>
           </div>
           {isExpanded ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
         </div>
@@ -79,7 +79,7 @@ const PrincipleCard: React.FC<PrincipleCardProps> = ({ principle, onAddObjective
       {isExpanded && (
         <div className="mt-5 space-y-3 border-l border-[#e4e9e5] pl-4 sm:pl-5">
           {objectives.length === 0 ? (
-            <p className="text-sm text-gray-400 italic py-4 text-center">
+            <p className="text-sm text-[#849096] italic py-4 text-center">
               У этого принципа пока нет целей
             </p>
           ) : (
