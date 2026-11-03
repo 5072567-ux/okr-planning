@@ -130,6 +130,15 @@ function validateImportedData(value: unknown): ImportedData {
   }
 
   const imported = data as unknown as ImportedData;
+  const legacyStatusMap: Record<string, Task['status']> = {
+    Todo: 'TODO',
+    'In Progress': 'DOING',
+    Done: 'DONE',
+  };
+  imported.tasks = imported.tasks.map((task) => ({
+    ...task,
+    status: legacyStatusMap[String(task.status)] || task.status,
+  }));
   const principleIds = new Set(imported.principles.map((item) => item.id));
   const objectiveIds = new Set(imported.objectives.map((item) => item.id));
   const keyResultIds = new Set(imported.keyResults.map((item) => item.id));
