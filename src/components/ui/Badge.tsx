@@ -16,8 +16,8 @@ const Badge: React.FC<BadgeProps> = ({ type, value }) => {
     styles = value === 'Large' ? 'border-[#e2dbea] bg-[#f3eff7] text-[#715b87]' : value === 'Medium' ? 'border-[#dce5e8] bg-[#edf3f4] text-[#426576]' : 'border-[#dce7df] bg-[#eef5f0] text-[#557765]';
   }
   if (type === 'status') {
-    styles = ['Done', 'Completed'].includes(value) ? 'border-[#dce7df] bg-[#eef5f0] text-[#557765]' :
-      ['In Progress', 'Active'].includes(value) ? 'border-[#dce5e8] bg-[#edf3f4] text-[#426576]' :
+    styles = ['DONE', 'Done', 'Completed'].includes(value) ? 'border-[#dce7df] bg-[#eef5f0] text-[#557765]' :
+      ['DOING', 'TO DISCUSS', 'In Progress', 'Active'].includes(value) ? 'border-[#dce5e8] bg-[#edf3f4] text-[#426576]' :
       'border-[#e3e8e5] bg-[#f3f5f3] text-[#687579]';
   }
   return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium leading-none ${styles}`}>{value}</span>;
