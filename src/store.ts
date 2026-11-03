@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
-import type { AppState, Principle, Objective, KeyResult, Sprint, Task } from './types';
+import type { AppState, Principle, Objective, KeyResult, Sprint, Task, KeyResultStatus } from './types';
 
 // Демо-данные. Идентификаторы связаны между собой: Principle -> Objective -> KeyResult -> Task.
 const mockPrinciples: Principle[] = [
@@ -52,6 +52,7 @@ const mockKeyResults: KeyResult[] = [
     startDate: '2026-01-01',
     endDate: '2026-06-30',
     progressPercent: 40,
+    status: 'В работе',
   },
   {
     id: 'kr2',
@@ -63,6 +64,7 @@ const mockKeyResults: KeyResult[] = [
     startDate: '2026-02-01',
     endDate: '2026-04-30',
     progressPercent: 0,
+    status: 'Ожидает',
   },
 ];
 
@@ -193,6 +195,11 @@ export const useAppStore = create<AppState>()(
           ),
         })),
 
+      updateKeyResultStatus: (id, status) =>
+        set((state) => ({
+          keyResults: state.keyResults.map((item) => item.id === id ? { ...item, status } : item),
+        })),
+
       updateKeyResultValue: (id, newValue) =>
         set((state) => {
           const keyResult = state.keyResults.find((item) => item.id === id);
@@ -267,7 +274,7 @@ export const useAppStore = create<AppState>()(
                 }))
               : [],
             keyResults: Array.isArray(legacy.keyResults)
-              ? legacy.keyResults.map((kr) => ({ ...kr }))
+              ? legacy.keyResults.map((kr) => ({ ...kr, status: kr.status || (kr.progressPercent >= 100 ? 'Завершен' : kr.progressPercent > 0 ? 'В работе' : 'Ожидает') }))
               : [],
           };
         }
