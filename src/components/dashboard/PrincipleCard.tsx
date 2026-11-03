@@ -15,7 +15,9 @@ interface PrincipleCardProps {
 }
 
 const PrincipleCard: React.FC<PrincipleCardProps> = ({ principle, onAddObjective, onAddKeyResult }) => {
-  const allObjectives = useAppStore((s) => s.objectives);\n  const keyResults = useAppStore((s) => s.keyResults);\n  const objectives = allObjectives.filter(o => o.principleId === principle.id);
+  const allObjectives = useAppStore((s) => s.objectives);
+  const keyResults = useAppStore((s) => s.keyResults);
+  const objectives = allObjectives.filter(o => o.principleId === principle.id);
   const [isExpanded, setIsExpanded] = useState(true);
 
   const aggregatedProgress = useMemo(() => {
