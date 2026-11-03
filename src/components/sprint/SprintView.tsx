@@ -46,11 +46,11 @@ const SprintView: React.FC = () => {
     return (
       <Card>
         <div className="text-center py-12">
-          <ListTodo size={48} className="mx-auto text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
+          <ListTodo size={48} className="mx-auto text-[#c5ceca] mb-4" />
+          <h3 className="text-lg font-semibold text-[#53636b] mb-2">
             Нет спринтов в системе
           </h3>
-          <p className="text-gray-500">
+          <p className="text-[#849096]">
             Создайте спринт через хранилище данных или импорт JSON
           </p>
         </div>
@@ -59,15 +59,15 @@ const SprintView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-8 animate-in">
       {/* Заголовок */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Zap className="text-amber-500" />
+          <h2 className="text-3xl font-semibold tracking-tight text-[#202a32] flex items-center gap-2">
+            <Zap className="text-[#b18b4a]" />
             Спринты
           </h2>
-          <p className="text-gray-500 mt-1 text-sm">
+          <p className="text-[#849096] mt-1 text-sm">
             Операционная работа: задачи, помидоры, связь с ключевыми результатами
           </p>
         </div>
@@ -85,23 +85,23 @@ const SprintView: React.FC = () => {
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex-1 min-w-[250px]">
             <div className="flex items-center gap-2 mb-2">
-              <Zap size={18} className="text-amber-500" />
-              <h3 className="text-lg font-bold text-gray-900">{activeSprint.name}</h3>
+              <Zap size={18} className="text-[#b18b4a]" />
+              <h3 className="text-lg font-bold text-[#202a32]">{activeSprint.name}</h3>
             </div>
-            <div className="flex items-center gap-1.5 mb-3 text-xs text-gray-500">
+            <div className="flex items-center gap-1.5 mb-3 text-xs text-[#849096]">
               <span>
                 {new Date(activeSprint.startDate).toLocaleDateString('ru-RU')} →{' '}
                 {new Date(activeSprint.endDate).toLocaleDateString('ru-RU')}
               </span>
             </div>
-            <div className="bg-white/70 rounded-lg p-3 border border-indigo-100">
+            <div className="rounded-xl border border-[#e8ece8] bg-[#f8f9f6] p-3.5">
               <div className="flex items-center gap-1.5 mb-1">
-                <Target size={13} className="text-indigo-600" />
-                <span className="text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                <Target size={13} className="text-[#31576a]" />
+                <span className="text-xs font-semibold text-[#53636b] uppercase tracking-wide">
                   Ценность спринта (Outcome)
                 </span>
               </div>
-              <p className="text-sm text-gray-700 leading-relaxed">
+              <p className="text-sm text-[#53636b] leading-relaxed">
                 {activeSprint.outcomeDescription}
               </p>
             </div>
@@ -109,38 +109,38 @@ const SprintView: React.FC = () => {
 
           {/* Статистика спринта */}
           <div className="grid grid-cols-2 gap-2 min-w-[200px]">
-            <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
-              <div className="text-2xl font-bold text-indigo-600">{stats.completionRate}%</div>
-              <div className="text-xs text-gray-500 flex items-center gap-1 justify-center">
+            <div className="rounded-xl border border-[#e5e8e4] bg-white p-3 text-center">
+              <div className="text-2xl font-bold text-[#31576a]">{stats.completionRate}%</div>
+              <div className="text-xs text-[#849096] flex items-center gap-1 justify-center">
                 <TrendingUp size={11} /> выполнение
               </div>
             </div>
-            <div className="bg-white rounded-lg p-3 border border-gray-200 text-center">
+            <div className="rounded-xl border border-[#e5e8e4] bg-white p-3 text-center">
               <div className="text-2xl font-bold text-rose-600">🍅 {stats.totalPomodoros}</div>
-              <div className="text-xs text-gray-500">помидоров</div>
+              <div className="text-xs text-[#849096]">помидоров</div>
             </div>
-            <div className="bg-white rounded-lg p-2 border border-gray-200 text-center">
-              <div className="text-sm font-semibold text-gray-900">{stats.done}/{stats.total}</div>
-              <div className="text-xs text-gray-500">задач</div>
+            <div className="rounded-xl border border-[#e5e8e4] bg-white p-2 text-center">
+              <div className="text-sm font-semibold text-[#202a32]">{stats.done}/{stats.total}</div>
+              <div className="text-xs text-[#849096]">задач</div>
             </div>
-            <div className="bg-white rounded-lg p-2 border border-gray-200 text-center">
-              <div className="text-sm font-semibold text-gray-900">{stats.relatedKRs.length}</div>
-              <div className="text-xs text-gray-500">КР в работе</div>
+            <div className="rounded-xl border border-[#e5e8e4] bg-white p-2 text-center">
+              <div className="text-sm font-semibold text-[#202a32]">{stats.relatedKRs.length}</div>
+              <div className="text-xs text-[#849096]">КР в работе</div>
             </div>
           </div>
         </div>
 
         {/* Связанные Key Results */}
         {stats.relatedKRs.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-indigo-100">
-            <div className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">
+          <div className="mt-4 pt-4 border-t border-[#e5eae6]">
+            <div className="text-xs font-semibold text-[#53636b] uppercase tracking-wide mb-2">
               🎯 Ключевые результаты в этом спринте
             </div>
             <div className="space-y-1.5">
               {stats.relatedKRs.map((kr) => (
-                <div key={kr.id} className="flex items-center justify-between text-sm bg-white rounded-md px-3 py-1.5 border border-gray-200">
-                  <span className="text-gray-700 truncate">{kr.title}</span>
-                  <span className="text-xs font-semibold text-indigo-600 ml-2 flex-shrink-0">
+                <div key={kr.id} className="flex items-center justify-between text-sm rounded-lg border border-[#e5e8e4] bg-white px-3 py-1.5">
+                  <span className="text-[#53636b] truncate">{kr.title}</span>
+                  <span className="text-xs font-semibold text-[#31576a] ml-2 flex-shrink-0">
                     {kr.currentValue}/{kr.targetValue} {kr.unit}
                   </span>
                 </div>
