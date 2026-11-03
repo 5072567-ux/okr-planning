@@ -117,6 +117,33 @@ const mockTasks: Task[] = [
 
 type ImportedData = Pick<AppState, 'principles' | 'objectives' | 'keyResults' | 'sprints' | 'tasks'>;
 
+const KEY_RESULT_STATUSES: KeyResultStatus[] = ['В работе', 'Ожидает', 'Завершен'];
+
+function getProgressPercent(currentValue: number, targetValue: number): number {
+  if (!Number.isFinite(currentValue) || !Number.isFinite(targetValue) || targetValue <= 0) return 0;
+  return Math.max(0, Math.min(100, Math.round((currentValue / targetValue) * 100)));
+}
+
+function normalizeKeyResult(kr: KeyResult): KeyResult {
+  const targetValue = Number(kr.targetValue);
+  const currentValue = Number(kr.currentValue);
+  if (!Number.isFinite(targetValue) || targetValue <= 0) {
+    throw new Error(`У ключевого результата «${kr.title}» целевое значение должно быть больше нуля.`);
+  }
+  if (!Number.isFinite(currentValue) || currentValue < 0) {
+    throw new Error(`У ключевого результата «${kr.title}» текущее значение должно быть неотрицательным числом.`);
+  }
+  const progressPercent = getProgressPercent(currentValue, targetValue);
+  const validStatus = KEY_RESULT_STATUSES.includes(kr.status as KeyResultStatus);
+  const status: KeyResultStatus = progressPercent >= 100
+    ? 'Завершен'
+    : kr.status === 'Завершен' || !validStatus
+      ? (progressPercent > 0 ? 'В работе' : 'Ожидает')
+      : kr.status as KeyResultStatus;
+  return { ...kr, targetValue, currentValue, progressPercent, status };
+}
+
+
 function validateImportedData(value: unknown): ImportedData {
   if (!value || typeof value !== 'object') {
     throw new Error('Файл должен содержать JSON-объект.');
@@ -141,13 +168,7 @@ function validateImportedData(value: unknown): ImportedData {
     ...task,
     status: legacyStatusMap[String(task.status)] || task.status,
   }));
-  const validKeyResultStatuses: KeyResultStatus[] = ['В работе', 'Ожидает', 'Завершен'];
-  imported.keyResults = imported.keyResults.map((kr) => ({
-    ...kr,
-    status: validKeyResultStatuses.includes(kr.status as KeyResultStatus)
-      ? kr.status
-      : kr.progressPercent >= 100 ? 'Завершен' : kr.progressPercent > 0 ? 'В работе' : 'Ожидает',
-  }));
+  imported.keyResults = imported.keyResults.map(normalizeKeyResult);
   const principleIds = new Set(imported.principles.map((item) => item.id));
   const objectiveIds = new Set(imported.objectives.map((item) => item.id));
   const keyResultIds = new Set(imported.keyResults.map((item) => item.id));
@@ -206,29 +227,30 @@ export const useAppStore = create<AppState>()(
         set((state) => ({
           keyResults: state.keyResults.map((item) => {
             if (item.id !== id) return item;
-            if (status === 'Завершен') return { ...item, status, currentValue: item.targetValue, progressPercent: 100 };
+            if (status === 'Завершен') {
+              return normalizeKeyResult({ ...item, currentValue: item.targetValue, status });
+            }
+            // Не допускаем противоречия: достигнутая цель не может иметь незавершённый статус.
+            if (getProgressPercent(item.currentValue, item.targetValue) >= 100) {
+              return normalizeKeyResult(item);
+            }
             return { ...item, status };
           }),
         })),
 
       updateKeyResultValue: (id, newValue) =>
-        set((state) => {
-          const keyResult = state.keyResults.find((item) => item.id === id);
-          if (!keyResult || !Number.isFinite(newValue) || newValue < 0) return state;
-
-          const progressPercent =
-            keyResult.targetValue > 0
-              ? Math.min(100, Math.round((newValue / keyResult.targetValue) * 100))
-              : 0;
-
-          return {
-            keyResults: state.keyResults.map((item) =>
-              item.id === id
-                ? { ...item, currentValue: newValue, progressPercent, status: progressPercent >= 100 ? 'Завершен' : item.status === 'Завершен' ? 'В работе' : item.status }
-                : item
-            ),
-          };
-        }),
+        set((state) => ({
+          keyResults: state.keyResults.map((item) => {
+            if (item.id !== id || !Number.isFinite(newValue) || newValue < 0) return item;
+            const progressPercent = getProgressPercent(newValue, item.targetValue);
+            const status: KeyResultStatus = progressPercent >= 100
+              ? 'Завершен'
+              : item.status === 'Завершен'
+                ? 'В работе'
+                : item.status || (progressPercent > 0 ? 'В работе' : 'Ожидает');
+            return normalizeKeyResult({ ...item, currentValue: newValue, progressPercent, status });
+          }),
+        })),
 
       exportData: () => {
         const state = get();
@@ -285,7 +307,7 @@ export const useAppStore = create<AppState>()(
                 }))
               : [],
             keyResults: Array.isArray(legacy.keyResults)
-              ? legacy.keyResults.map((kr) => ({ ...kr, status: kr.status || (kr.progressPercent >= 100 ? 'Завершен' : kr.progressPercent > 0 ? 'В работе' : 'Ожидает') }))
+              ? legacy.keyResults.map(normalizeKeyResult)
               : [],
           };
         }
