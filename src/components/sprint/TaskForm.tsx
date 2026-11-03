@@ -42,27 +42,27 @@ const TaskForm: React.FC<TaskFormProps> = ({ sprintId, onSuccess }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#53636b] mb-1">
           Название задачи *
         </label>
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="field-control"
           placeholder="Конкретное операционное действие..."
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#53636b] mb-1">
           🎯 Связь с Ключевым результатом *
         </label>
         <select
           value={keyResultId}
           onChange={(e) => setKeyResultId(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+          className="field-control bg-white"
           required
         >
           <option value="">Выберите ключевой результат...</option>
@@ -72,20 +72,20 @@ const TaskForm: React.FC<TaskFormProps> = ({ sprintId, onSuccess }) => {
             </option>
           ))}
         </select>
-        <p className="text-xs text-gray-500 mt-1">
+        <p className="text-xs text-[#849096] mt-1">
           Каждая задача должна закрывать конкретный измеримый результат
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#53636b] mb-1">
             💥 Влияние на OKR
           </label>
           <select
             value={impact}
             onChange={(e) => setImpact(e.target.value as ImpactLevel)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+            className="field-control bg-white"
           >
             <option value="High">Высокое</option>
             <option value="Medium">Среднее</option>
@@ -94,13 +94,13 @@ const TaskForm: React.FC<TaskFormProps> = ({ sprintId, onSuccess }) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-[#53636b] mb-1">
             🧠 Усилия
           </label>
           <select
             value={effort}
             onChange={(e) => setEffort(e.target.value as EffortLevel)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+            className="field-control bg-white"
           >
             <option value="Small">Малые</option>
             <option value="Medium">Средние</option>
@@ -110,7 +110,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ sprintId, onSuccess }) => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-[#53636b] mb-1">
           🍅 Оценка в помидорах (25 мин)
         </label>
         <input
@@ -119,7 +119,7 @@ const TaskForm: React.FC<TaskFormProps> = ({ sprintId, onSuccess }) => {
           max={20}
           value={pomodoroEstimate}
           onChange={(e) => setPomodoroEstimate(Number(e.target.value))}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="field-control"
         />
       </div>
 
