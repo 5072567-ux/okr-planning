@@ -197,7 +197,11 @@ export const useAppStore = create<AppState>()(
 
       updateKeyResultStatus: (id, status) =>
         set((state) => ({
-          keyResults: state.keyResults.map((item) => item.id === id ? { ...item, status } : item),
+          keyResults: state.keyResults.map((item) => {
+            if (item.id !== id) return item;
+            if (status === 'Завершен') return { ...item, status, currentValue: item.targetValue, progressPercent: 100 };
+            return { ...item, status };
+          }),
         })),
 
       updateKeyResultValue: (id, newValue) =>
@@ -213,7 +217,7 @@ export const useAppStore = create<AppState>()(
           return {
             keyResults: state.keyResults.map((item) =>
               item.id === id
-                ? { ...item, currentValue: newValue, progressPercent }
+                ? { ...item, currentValue: newValue, progressPercent, status: progressPercent >= 100 ? 'Завершен' : item.status === 'Завершен' ? 'В работе' : item.status }
                 : item
             ),
           };
