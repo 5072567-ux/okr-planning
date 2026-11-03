@@ -27,6 +27,7 @@ const KeyResultItem: React.FC<KeyResultItemProps> = ({ keyResult }) => {
           <Award size={18} className="text-[#7893a1] mt-0.5 flex-shrink-0" />
           <div className="flex-1">
             <p className="text-sm font-medium text-[#202a32] leading-snug">{keyResult.title}</p>
+            <p className="mt-1 text-[11px] text-[#849096]">{keyResult.sphere || 'Сфера не указана'}</p>
             <div className="flex items-center gap-3 mt-1.5 text-xs text-[#849096]">
               <span className="flex items-center gap-1">
                 <Calendar size={12} />
