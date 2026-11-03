@@ -43,7 +43,7 @@ const Analytics: React.FC = () => {
     today.setHours(0, 0, 0, 0);
     const elapsedDays = Math.floor((today.getTime() - startDate.getTime()) / 86400000);
     const currentDay = Math.max(0, Math.min(totalDays, elapsedDays));
-    const remainingTasks = sprintTasks.filter((task) => task.status !== 'Done').length;
+    const remainingTasks = sprintTasks.filter((task) => task.status !== 'DONE').length;
 
     return Array.from({ length: totalDays + 1 }, (_, day) => ({
       day,
@@ -58,7 +58,7 @@ const Analytics: React.FC = () => {
     const avgProgress = totalKR > 0 
       ? Math.round(keyResults.reduce((sum, kr) => sum + kr.progressPercent, 0) / totalKR)
       : 0;
-    const completedTasks = tasks.filter(t => t.status === 'Done').length;
+    const completedTasks = tasks.filter(t => t.status === 'DONE').length;
     const totalTasks = tasks.length;
     const taskCompletionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
