@@ -61,13 +61,13 @@ const SprintView: React.FC = () => {
   return (
     <div className="space-y-8 animate-in">
       {/* Заголовок */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-3xl font-semibold tracking-tight text-[#202a32] flex items-center gap-2">
+          <h2 className="text-3xl font-semibold tracking-tight text-[#202a32] flex items-center gap-3">
             <Zap className="text-[#b18b4a]" />
             Спринты
           </h2>
-          <p className="text-[#849096] mt-1 text-sm">
+          <p className="text-[#737d83] mt-2 text-sm">
             Операционная работа: задачи, помидоры, связь с ключевыми результатами
           </p>
         </div>
@@ -116,15 +116,15 @@ const SprintView: React.FC = () => {
               </div>
             </div>
             <div className="rounded-xl border border-[#e5e8e4] bg-white p-3 text-center">
-              <div className="text-2xl font-bold text-rose-600">🍅 {stats.totalPomodoros}</div>
+              <div className="text-2xl font-bold text-[#b18b4a]">🍅 {stats.totalPomodoros}</div>
               <div className="text-xs text-[#849096]">помидоров</div>
             </div>
             <div className="rounded-xl border border-[#e5e8e4] bg-white p-2 text-center">
-              <div className="text-sm font-semibold text-[#202a32]">{stats.done}/{stats.total}</div>
+              <div className="text-sm font-semibold text-[#31576a]">{stats.done}/{stats.total}</div>
               <div className="text-xs text-[#849096]">задач</div>
             </div>
             <div className="rounded-xl border border-[#e5e8e4] bg-white p-2 text-center">
-              <div className="text-sm font-semibold text-[#202a32]">{stats.relatedKRs.length}</div>
+              <div className="text-sm font-semibold text-[#31576a]">{stats.relatedKRs.length}</div>
               <div className="text-xs text-[#849096]">КР в работе</div>
             </div>
           </div>
