@@ -344,6 +344,7 @@ const KeyResultForm: React.FC<{ objectiveId: string; onSuccess: () => void }> = 
       startDate,
       endDate,
       progressPercent: 0,
+      sphere,
     };
 
     useAppStore.setState((state) => ({
