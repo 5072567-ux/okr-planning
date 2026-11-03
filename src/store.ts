@@ -289,9 +289,9 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'okr-tree-storage',
-      version: 2,
+      version: 3,
       migrate: (persistedState, version) => {
-        if (version < 2 && persistedState && typeof persistedState === 'object') {
+        if (version < 3 && persistedState && typeof persistedState === 'object') {
           const legacy = persistedState as Partial<AppState>;
           const statusMap: Record<string, Task['status']> = {
             Todo: 'TODO',
