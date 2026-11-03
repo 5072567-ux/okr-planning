@@ -62,16 +62,16 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   ];
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+    <header className="bg-white/95 border-b border-[#e5e8e4] sticky top-0 z-40 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+            <div className="p-2 bg-[#123b53] rounded-lg">
               <TreePine size={22} className="text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900 leading-tight">OKR Tree</h1>
-              <p className="text-xs text-gray-500 leading-tight hidden sm:block">Система целей и спринтов</p>
+              <h1 className="text-lg font-bold text-[#202a32] leading-tight">OKR Tree</h1>
+              <p className="text-xs text-[#849096] leading-tight hidden sm:block">Система целей и спринтов</p>
             </div>
           </div>
 
@@ -82,8 +82,8 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
                 onClick={() => onViewChange(item.id)}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   currentView === item.id
-                    ? 'bg-indigo-50 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-[#eaf0f3] text-[#123b53]'
+                    : 'text-[#66747a] hover:bg-[#f4f6f4] hover:text-[#202a32]'
                 }`}
               >
                 {item.icon}
@@ -93,10 +93,10 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
           </nav>
 
           <div className="hidden md:flex items-center gap-2">
-            <button onClick={handleExport} className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">
+            <button onClick={handleExport} className="flex items-center gap-1 px-3 py-1.5 text-sm text-[#66747a] hover:bg-[#f2f4f1] rounded-lg">
               <Download size={16} /> Экспорт
             </button>
-            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">
+            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 px-3 py-1.5 text-sm text-[#66747a] hover:bg-[#f2f4f1] rounded-lg">
               <Upload size={16} /> Импорт
             </button>
             <button onClick={handleReset} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-md" title="Сброс">
@@ -111,7 +111,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden py-3 border-t border-gray-100 space-y-1">
+          <div className="md:hidden py-3 border-t border-[#edf0ed] space-y-1">
             {navItems.map((item) => (
               <button
                 key={item.id}
