@@ -29,9 +29,9 @@ const SprintView: React.FC = () => {
   // Статистика спринта
   const stats = useMemo(() => {
     const total = sprintTasks.length;
-    const done = sprintTasks.filter(t => t.status === 'Done').length;
-    const inProgress = sprintTasks.filter(t => t.status === 'In Progress').length;
-    const todo = sprintTasks.filter(t => t.status === 'Todo').length;
+    const done = sprintTasks.filter(t => t.status === 'DONE').length;
+    const inProgress = sprintTasks.filter(t => t.status === 'DOING').length;
+    const todo = sprintTasks.filter(t => t.status === 'TODO').length;
     const totalPomodoros = sprintTasks.reduce((sum, t) => sum + t.pomodoroActual, 0);
     const completionRate = total > 0 ? Math.round((done / total) * 100) : 0;
 
