@@ -7,7 +7,7 @@ import PrincipleCard from './PrincipleCard';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { useAppStore } from '@/store';
-import { Principle, Objective, KeyResult, Sprint, Task } from '@/types';
+import { Principle, Objective } from '@/types';
 
 const Dashboard: React.FC = () => {
   const principles = useAppStore((s) => s.principles);
@@ -161,8 +161,6 @@ const PrincipleForm: React.FC<{ onSuccess: () => void }> = ({ onSuccess }) => {
   const [name, setName] = useState('');
   const [category, setCategory] = useState('');
   const [description, setDescription] = useState('');
-  const add = useAppStore((s) => s.principles); // для проверки
-  const store = useAppStore();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
