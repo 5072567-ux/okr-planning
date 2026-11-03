@@ -141,6 +141,13 @@ function validateImportedData(value: unknown): ImportedData {
     ...task,
     status: legacyStatusMap[String(task.status)] || task.status,
   }));
+  const validKeyResultStatuses: KeyResultStatus[] = ['В работе', 'Ожидает', 'Завершен'];
+  imported.keyResults = imported.keyResults.map((kr) => ({
+    ...kr,
+    status: validKeyResultStatuses.includes(kr.status as KeyResultStatus)
+      ? kr.status
+      : kr.progressPercent >= 100 ? 'Завершен' : kr.progressPercent > 0 ? 'В работе' : 'Ожидает',
+  }));
   const principleIds = new Set(imported.principles.map((item) => item.id));
   const objectiveIds = new Set(imported.objectives.map((item) => item.id));
   const keyResultIds = new Set(imported.keyResults.map((item) => item.id));
@@ -260,9 +267,9 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'okr-tree-storage',
-      version: 1,
+      version: 2,
       migrate: (persistedState, version) => {
-        if (version === 0 && persistedState && typeof persistedState === 'object') {
+        if (version < 2 && persistedState && typeof persistedState === 'object') {
           const legacy = persistedState as Partial<AppState>;
           const statusMap: Record<string, Task['status']> = {
             Todo: 'TODO',
