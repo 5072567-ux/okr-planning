@@ -105,4 +105,102 @@ const Analytics: React.FC = () => {
               <TrendingUp size={20} className="text-emerald-600" />
             </div>
             <div>
-             
+              <div className="text-xs text-gray-500">Средний прогресс</div>
+              <div className="text-2xl font-bold text-gray-900">{stats.avgProgress}%</div>
+            </div>
+          </div>
+        </Card>
+        <Card className="!p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-amber-100 rounded-lg">
+              <Zap size={20} className="text-amber-600" />
+            </div>
+            <div>
+              <div className="text-xs text-gray-500">Задач выполнено</div>
+              <div className="text-2xl font-bold text-gray-900">
+                {stats.completedTasks}/{stats.totalTasks}
+              </div>
+            </div>
+          </div>
+        </Card>
+        <Card className="!p-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-rose-100 rounded-lg">
+              <BarChart3 size={20} className="text-rose-600" />
+            </div>
+            <div>
+              <div className="text-xs text-gray-500">Эффективность задач</div>
+              <div className="text-2xl font-bold text-gray-900">{stats.taskCompletionRate}%</div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* График прогресса Ключевых результатов */}
+      <Card>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <Target size={20} className="text-indigo-600" />
+          Прогресс по Ключевым результатам
+        </h3>
+        {krProgressData.length === 0 ? (
+          <div className="text-center py-12 text-gray-400">
+            Нет ключевых результатов для отображения
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={krProgressData} layout="vertical" margin={{ left: 20, right: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis type="number" domain={[0, 100]} tickFormatter={(value) => `${value}%`} />
+              <YAxis type="category" dataKey="name" width={150} tick={{ fontSize: 12 }} />
+              <Tooltip 
+                formatter={(value: number) => [`${value}%`, 'Прогресс']}
+                labelFormatter={(label) => `КР: ${label}`}
+              />
+              <Bar dataKey="progress" fill="#6366f1" radius={[0, 4, 4, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
+
+      {/* Burndown Chart */}
+      <Card>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+          <TrendingUp size={20} className="text-emerald-600" />
+          Burndown Chart (Активный спринт)
+        </h3>
+        {burndownData.length === 0 ? (
+          <div className="text-center py-12 text-gray-400">
+            Нет активного спринта для отображения
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={burndownData} margin={{ left: 20, right: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+              <XAxis dataKey="day" label={{ value: 'День', position: 'insideBottom', offset: -5 }} />
+              <YAxis label={{ value: 'Задач осталось', angle: -90, position: 'insideLeft' }} />
+              <Tooltip />
+              <Legend />
+              <Line 
+                type="monotone" 
+                dataKey="ideal" 
+                stroke="#9ca3af" 
+                strokeDasharray="5 5"
+                name="Идеальный burndown"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="actual" 
+                stroke="#10b981" 
+                strokeWidth={2}
+                name="Фактический burndown"
+                connectNulls
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
+    </div>
+  );
+};
+
+export default Analytics;
