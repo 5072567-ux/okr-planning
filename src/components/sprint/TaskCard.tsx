@@ -43,15 +43,15 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     <div
       draggable
       onDragStart={handleDragStart}
-      className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md hover:border-indigo-300 transition-all cursor-grab active:cursor-grabbing group"
+      className="rounded-xl border border-[#e5e8e4] bg-white p-3.5 hover:shadow-sm hover:border-[#b7c8ce] transition-all cursor-grab active:cursor-grabbing group"
     >
       {/* Заголовок с grip-иконкой */}
       <div className="flex items-start gap-2 mb-2">
-        <GripVertical size={16} className="text-gray-300 mt-0.5 flex-shrink-0 group-hover:text-gray-500" />
-        <p className="text-sm font-medium text-gray-900 leading-snug flex-1">{task.title}</p>
+        <GripVertical size={16} className="text-[#b7c1bd] mt-0.5 flex-shrink-0 group-hover:text-[#66747a]" />
+        <p className="text-sm font-medium text-[#202a32] leading-snug flex-1">{task.title}</p>
         <button
           onClick={() => deleteTask(task.id)}
-          className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 transition-opacity flex-shrink-0"
+          className="opacity-0 group-hover:opacity-100 text-[#a0aaa7] hover:text-[#a85c54] transition-opacity flex-shrink-0"
           title="Удалить задачу"
         >
           <Trash2 size={14} />
@@ -60,9 +60,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
       {/* Связь с Key Result */}
       {keyResult && (
-        <div className="flex items-center gap-1.5 mb-2.5 px-2 py-1.5 bg-indigo-50 rounded-md border border-indigo-100">
-          <Target size={12} className="text-indigo-600 flex-shrink-0" />
-          <span className="text-xs text-indigo-700 truncate" title={keyResult.title}>
+        <div className="flex items-center gap-1.5 mb-2.5 px-2 py-1.5 bg-[#edf3f4] rounded-lg border border-[#dce5e8]">
+          <Target size={12} className="text-[#31576a] flex-shrink-0" />
+          <span className="text-xs text-[#31576a] truncate" title={keyResult.title}>
             {keyResult.title}
           </span>
         </div>
@@ -75,13 +75,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       </div>
 
       {/* Помидоры и кнопка */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between pt-2 border-t border-[#edf0ed]">
         <div className="flex items-center gap-2">
           <Timer size={14} className="text-rose-500" />
           <div className="flex items-center gap-1">
             {renderPomodoros()}
           </div>
-          <span className="text-xs text-gray-500 ml-1">
+          <span className="text-xs text-[#849096] ml-1">
             {task.pomodoroActual}/{task.pomodoroEstimate}
           </span>
         </div>
