@@ -1,7 +1,6 @@
 'use client';
 import React, { useState, useRef } from 'react';
 import { TreePine, Zap, BarChart3, Download, Upload, RotateCcw, Menu, X } from 'lucide-react';
-import Button from '@/components/ui/Button';
 import { useAppStore } from '@/store';
 
 export type ViewType = 'dashboard' | 'sprints' | 'analytics';
