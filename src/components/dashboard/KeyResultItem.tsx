@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Award, Calendar } from 'lucide-react';
 import ProgressBar from '@/components/ui/ProgressBar';
 import { useAppStore } from '@/store';
-import { KeyResult } from '@/types';
+import { KeyResult, KeyResultStatus } from '@/types';
 
 interface KeyResultItemProps {
   keyResult: KeyResult;
@@ -12,6 +12,8 @@ interface KeyResultItemProps {
 
 const KeyResultItem: React.FC<KeyResultItemProps> = ({ keyResult }) => {
   const updateValue = useAppStore((s) => s.updateKeyResultValue);
+  const updateStatus = useAppStore((s) => s.updateKeyResultStatus);
+  const status = keyResult.status || (keyResult.progressPercent >= 100 ? 'Завершен' : keyResult.progressPercent > 0 ? 'В работе' : 'Ожидает');
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(keyResult.currentValue);
 
@@ -28,6 +30,14 @@ const KeyResultItem: React.FC<KeyResultItemProps> = ({ keyResult }) => {
           <div className="flex-1">
             <p className="text-sm font-medium text-[#202a32] leading-snug">{keyResult.title}</p>
             <p className="mt-1 text-[11px] text-[#849096]">{keyResult.sphere || 'Сфера не указана'}</p>
+            <div className="mt-2 flex items-center gap-2">
+              <label htmlFor={`kr-status-${keyResult.id}`} className="text-xs text-[#849096]">Статус</label>
+              <select id={`kr-status-${keyResult.id}`} value={status} onChange={(e) => updateStatus(keyResult.id, e.target.value as KeyResultStatus)} className="rounded-md border border-[#dfe4e1] bg-white px-2 py-1 text-xs text-[#42545c]">
+                <option value="Ожидает">Ожидает</option>
+                <option value="В работе">В работе</option>
+                <option value="Завершен">Завершен</option>
+              </select>
+            </div>
             <div className="flex items-center gap-3 mt-1.5 text-xs text-[#849096]">
               <span className="flex items-center gap-1">
                 <Calendar size={12} />
