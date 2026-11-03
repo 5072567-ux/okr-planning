@@ -105,7 +105,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleImport} className="hidden" />
           </div>
 
-          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-[#66747a] hover:bg-[#f2f4f1] rounded-lg">
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -117,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
                 key={item.id}
                 onClick={() => { onViewChange(item.id); setIsMenuOpen(false); }}
                 className={`flex items-center gap-2 w-full px-3 py-2 text-sm font-medium ${
-                  currentView === item.id ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600'
+                  currentView === item.id ? 'bg-[#eaf0f3] text-[#123b53]' : 'text-[#66747a] hover:bg-[#f4f6f4]'
                 }`}
               >
                 {item.icon}
