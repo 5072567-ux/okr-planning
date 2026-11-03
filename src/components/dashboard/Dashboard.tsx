@@ -7,7 +7,7 @@ import PrincipleCard from './PrincipleCard';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { useAppStore } from '@/store';
-import { Principle, Objective } from '@/types';
+import { Principle, Objective, KeyResult } from '@/types';
 
 const Dashboard: React.FC = () => {
   const principles = useAppStore((s) => s.principles);
@@ -18,6 +18,7 @@ const Dashboard: React.FC = () => {
 
   const [modalType, setModalType] = useState<'principle' | 'objective' | 'keyResult' | null>(null);
   const [parentPrincipleId, setParentPrincipleId] = useState<string>('');
+  const [parentObjectiveId, setParentObjectiveId] = useState<string>('');
 
   // Статистика системы
   const stats = {
@@ -32,6 +33,11 @@ const Dashboard: React.FC = () => {
   const handleAddObjective = (principleId: string) => {
     setParentPrincipleId(principleId);
     setModalType('objective');
+  };
+
+  const handleAddKeyResult = (objectiveId: string) => {
+    setParentObjectiveId(objectiveId);
+    setModalType('keyResult');
   };
 
   return (
@@ -127,6 +133,7 @@ const Dashboard: React.FC = () => {
               key={principle.id}
               principle={principle}
               onAddObjective={handleAddObjective}
+              onAddKeyResult={handleAddKeyResult}
             />
           ))
         )}
@@ -149,6 +156,18 @@ const Dashboard: React.FC = () => {
       >
         <ObjectiveForm
           principleId={parentPrincipleId}
+          onSuccess={() => setModalType(null)}
+        />
+      </Modal>
+
+      {/* Модальное окно: Новый ключевой результат */}
+      <Modal
+        isOpen={modalType === 'keyResult'}
+        onClose={() => setModalType(null)}
+        title="Новый ключевой результат (Ветвь)"
+      >
+        <KeyResultForm
+          objectiveId={parentObjectiveId}
           onSuccess={() => setModalType(null)}
         />
       </Modal>
@@ -298,6 +317,78 @@ const ObjectiveForm: React.FC<{ principleId: string; onSuccess: () => void }> = 
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="secondary" onClick={onSuccess}>Отмена</Button>
         <Button type="submit">Создать цель</Button>
+      </div>
+    </form>
+  );
+};
+
+
+const KeyResultForm: React.FC<{ objectiveId: string; onSuccess: () => void }> = ({ objectiveId, onSuccess }) => {
+  const [title, setTitle] = useState('');
+  const [targetValue, setTargetValue] = useState(1);
+  const [unit, setUnit] = useState('');
+  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
+  const [endDate, setEndDate] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim() || !unit.trim() || targetValue <= 0 || !endDate || endDate < startDate) return;
+
+    const newKeyResult: Omit<KeyResult, 'id'> = {
+      title: title.trim(),
+      objectiveId,
+      targetValue,
+      currentValue: 0,
+      unit: unit.trim(),
+      startDate,
+      endDate,
+      progressPercent: 0,
+    };
+
+    useAppStore.setState((state) => ({
+      keyResults: [...state.keyResults, { ...newKeyResult, id: crypto.randomUUID() }],
+    }));
+    onSuccess();
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Название результата *</label>
+        <input value={title} onChange={(e) => setTitle(e.target.value)} required
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          placeholder="Измеримое изменение или достигнутый результат" />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Целевое значение *</label>
+          <input type="number" min={1} value={targetValue}
+            onChange={(e) => setTargetValue(Number(e.target.value))} required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Единица измерения *</label>
+          <input value={unit} onChange={(e) => setUnit(e.target.value)} required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg" placeholder="клиентов, ₽, глав" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Начало *</label>
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Срок *</label>
+          <input type="date" value={endDate} min={startDate} onChange={(e) => setEndDate(e.target.value)} required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+        </div>
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="secondary" onClick={onSuccess}>Отмена</Button>
+        <Button type="submit" disabled={!title.trim() || !unit.trim() || targetValue <= 0 || !endDate || endDate < startDate}>
+          Создать результат
+        </Button>
       </div>
     </form>
   );
