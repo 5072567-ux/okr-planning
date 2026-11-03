@@ -7,7 +7,7 @@ import PrincipleCard from './PrincipleCard';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import { useAppStore } from '@/store';
-import { Principle, Objective, KeyResult } from '@/types';
+import { Principle, Objective, KeyResult, LIFE_SPHERES, LifeSphere } from '@/types';
 
 const Dashboard: React.FC = () => {
   const principles = useAppStore((s) => s.principles);
@@ -27,7 +27,7 @@ const Dashboard: React.FC = () => {
     totalKeyResults: keyResults.length,
     activeSprints: sprints.filter(s => s.status === 'Active').length,
     totalTasks: tasks.length,
-    completedTasks: tasks.filter(t => t.status === 'Done').length,
+    completedTasks: tasks.filter(t => t.status === 'DONE').length,
   };
 
   const handleAddObjective = (principleId: string) => {
@@ -329,10 +329,11 @@ const KeyResultForm: React.FC<{ objectiveId: string; onSuccess: () => void }> = 
   const [unit, setUnit] = useState('');
   const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
   const [endDate, setEndDate] = useState('');
+  const [sphere, setSphere] = useState<LifeSphere | ''>('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !unit.trim() || targetValue <= 0 || !endDate || endDate < startDate) return;
+    if (!title.trim() || !unit.trim() || !sphere || !Number.isFinite(targetValue) || targetValue <= 0 || !endDate || endDate < startDate) return;
 
     const newKeyResult: Omit<KeyResult, 'id'> = {
       title: title.trim(),
@@ -358,6 +359,14 @@ const KeyResultForm: React.FC<{ objectiveId: string; onSuccess: () => void }> = 
         <input value={title} onChange={(e) => setTitle(e.target.value)} required
           className="w-full px-3 py-2 border border-[#dfe4e1] rounded-lg"
           placeholder="Измеримое изменение или достигнутый результат" />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Сфера жизни *</label>
+        <select value={sphere} onChange={(e) => setSphere(e.target.value as LifeSphere)} required
+          className="w-full px-3 py-2 border border-[#dfe4e1] rounded-lg bg-white">
+          <option value="">Выберите сферу...</option>
+          {LIFE_SPHERES.map((item) => <option key={item} value={item}>{item}</option>)}
+        </select>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
@@ -386,7 +395,7 @@ const KeyResultForm: React.FC<{ objectiveId: string; onSuccess: () => void }> = 
       </div>
       <div className="flex justify-end gap-2">
         <Button type="button" variant="secondary" onClick={onSuccess}>Отмена</Button>
-        <Button type="submit" disabled={!title.trim() || !unit.trim() || targetValue <= 0 || !endDate || endDate < startDate}>
+        <Button type="submit" disabled={!title.trim() || !unit.trim() || !sphere || !Number.isFinite(targetValue) || targetValue <= 0 || !endDate || endDate < startDate}>
           Создать результат
         </Button>
       </div>
