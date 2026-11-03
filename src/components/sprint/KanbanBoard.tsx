@@ -1,0 +1,36 @@
+// components/sprint/KanbanBoard.tsx
+'use client';
+import React from 'react';
+import KanbanColumn from './KanbanColumn';
+import { useAppStore } from '@/store';
+import { TaskStatus } from '@/types';
+
+interface KanbanBoardProps {
+  sprintId: string;
+}
+
+const KanbanBoard: React.FC<KanbanBoardProps> = ({ sprintId }) => {
+  const tasks = useAppStore((s) => s.tasks).filter(t => t.sprintId === sprintId);
+
+  const columns: { status: TaskStatus; title: string; accentColor: string }[] = [
+    { status: 'Todo', title: 'К выполнению', accentColor: 'bg-gray-400' },
+    { status: 'In Progress', title: 'В работе', accentColor: 'bg-blue-500' },
+    { status: 'Done', title: 'Готово', accentColor: 'bg-emerald-500' },
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {columns.map((col) => (
+        <KanbanColumn
+          key={col.status}
+          status={col.status}
+          title={col.title}
+          accentColor={col.accentColor}
+          tasks={tasks.filter(t => t.status === col.status)}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default KanbanBoard;
