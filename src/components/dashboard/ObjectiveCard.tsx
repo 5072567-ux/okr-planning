@@ -17,13 +17,19 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult
   const keyResults = useAppStore((s) => s.keyResults).filter(kr => kr.objectiveId === objective.id);
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const derivedStatus = useMemo(() => {
+    if (objective.status === 'Archived') return 'Archived';
+    if (keyResults.length > 0 && keyResults.every((kr) => (kr.status || (kr.progressPercent >= 100 ? 'Завершен' : kr.progressPercent > 0 ? 'В работе' : 'Ожидает')) === 'Завершен')) return 'Completed';
+    return 'Active';
+  }, [objective.status, keyResults]);
+
   const aggregatedProgress = useMemo(() => {
     if (keyResults.length === 0) return 0;
     const sum = keyResults.reduce((acc, kr) => acc + kr.progressPercent, 0);
     return Math.round(sum / keyResults.length);
   }, [keyResults]);
 
-  const statusColor = aggregatedProgress >= 70 ? 'text-emerald-600' 
+  const statusColor = derivedStatus === 'Completed' ? 'text-emerald-600' : aggregatedProgress >= 70 ? 'text-emerald-600' 
     : aggregatedProgress >= 40 ? 'text-[#a77b37]' : 'text-[#a85c54]';
 
   return (
@@ -45,7 +51,7 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult
                 <h4 className="font-semibold text-[#202a32] leading-snug">{objective.title}</h4>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs text-[#849096]">{objective.timeframe}</span>
-                  <Badge type="status" value={objective.status} />
+                  <Badge type="status" value={derivedStatus} />
                 </div>
               </div>
             </div>
