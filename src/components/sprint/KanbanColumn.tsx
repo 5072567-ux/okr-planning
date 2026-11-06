@@ -41,15 +41,15 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, title, tasks, accen
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`flex flex-col rounded-xl border-2 transition-colors min-h-[400px] ${
-        isOver ? 'border-indigo-400 bg-indigo-50/50' : 'border-gray-200 bg-gray-50/50'
+        isOver ? 'border-[#9aafba] bg-[#eef3f4]' : 'border-[#e5e8e4] bg-[#f4f5f2]'
       }`}
     >
       {/* Заголовок колонки */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[#e5e8e4]">
         <div className="flex items-center gap-2">
           <div className={`w-2.5 h-2.5 rounded-full ${accentColor}`} />
-          <h3 className="font-semibold text-gray-900 text-sm">{title}</h3>
-          <span className="text-xs text-gray-500 bg-white px-2 py-0.5 rounded-full border border-gray-200">
+          <h3 className="font-semibold text-[#35434a] text-sm">{title}</h3>
+          <span className="text-xs text-[#849096] bg-white px-2 py-0.5 rounded-full border border-[#e5e8e4]">
             {tasks.length}
           </span>
         </div>
@@ -63,7 +63,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, title, tasks, accen
       {/* Список задач */}
       <div className="flex-1 p-3 space-y-2 overflow-y-auto">
         {tasks.length === 0 ? (
-          <div className="flex items-center justify-center h-24 text-sm text-gray-400 italic">
+          <div className="flex items-center justify-center h-24 text-sm text-[#a0aaa7] italic">
             Перетащите задачу сюда
           </div>
         ) : (

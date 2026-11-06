@@ -2,7 +2,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { v4 as uuidv4 } from 'uuid';
-import type { AppState, Principle, Objective, KeyResult, Sprint, Task } from './types';
+import type { AppState, Principle, Objective, KeyResult, Sprint, Task, KeyResultStatus } from './types';
 
 // Демо-данные. Идентификаторы связаны между собой: Principle -> Objective -> KeyResult -> Task.
 const mockPrinciples: Principle[] = [
@@ -52,6 +52,7 @@ const mockKeyResults: KeyResult[] = [
     startDate: '2026-01-01',
     endDate: '2026-06-30',
     progressPercent: 40,
+    status: 'В работе',
   },
   {
     id: 'kr2',
@@ -63,6 +64,7 @@ const mockKeyResults: KeyResult[] = [
     startDate: '2026-02-01',
     endDate: '2026-04-30',
     progressPercent: 0,
+    status: 'Ожидает',
   },
 ];
 
@@ -83,7 +85,7 @@ const mockTasks: Task[] = [
     title: 'Составить детальное оглавление пособия',
     sprintId: 's1',
     keyResultId: 'kr1',
-    status: 'Done',
+    status: 'DONE',
     impact: 'High',
     effort: 'Medium',
     pomodoroEstimate: 4,
@@ -94,7 +96,7 @@ const mockTasks: Task[] = [
     title: 'Написать черновик введения (2000 слов)',
     sprintId: 's1',
     keyResultId: 'kr1',
-    status: 'In Progress',
+    status: 'DOING',
     impact: 'High',
     effort: 'Large',
     pomodoroEstimate: 8,
@@ -105,7 +107,7 @@ const mockTasks: Task[] = [
     title: 'Исследовать 3 платформы для размещения цифрового продукта',
     sprintId: 's1',
     keyResultId: 'kr2',
-    status: 'Todo',
+    status: 'TODO',
     impact: 'Medium',
     effort: 'Small',
     pomodoroEstimate: 2,
@@ -114,6 +116,33 @@ const mockTasks: Task[] = [
 ];
 
 type ImportedData = Pick<AppState, 'principles' | 'objectives' | 'keyResults' | 'sprints' | 'tasks'>;
+
+const KEY_RESULT_STATUSES: KeyResultStatus[] = ['В работе', 'Ожидает', 'Завершен'];
+
+function getProgressPercent(currentValue: number, targetValue: number): number {
+  if (!Number.isFinite(currentValue) || !Number.isFinite(targetValue) || targetValue <= 0) return 0;
+  return Math.max(0, Math.min(100, Math.round((currentValue / targetValue) * 100)));
+}
+
+function normalizeKeyResult(kr: KeyResult): KeyResult {
+  const targetValue = Number(kr.targetValue);
+  const currentValue = Number(kr.currentValue);
+  if (!Number.isFinite(targetValue) || targetValue <= 0) {
+    throw new Error(`У ключевого результата «${kr.title}» целевое значение должно быть больше нуля.`);
+  }
+  if (!Number.isFinite(currentValue) || currentValue < 0) {
+    throw new Error(`У ключевого результата «${kr.title}» текущее значение должно быть неотрицательным числом.`);
+  }
+  const progressPercent = getProgressPercent(currentValue, targetValue);
+  const validStatus = KEY_RESULT_STATUSES.includes(kr.status as KeyResultStatus);
+  const status: KeyResultStatus = progressPercent >= 100
+    ? 'Завершен'
+    : kr.status === 'Завершен' || !validStatus
+      ? (progressPercent > 0 ? 'В работе' : 'Ожидает')
+      : kr.status as KeyResultStatus;
+  return { ...kr, targetValue, currentValue, progressPercent, status };
+}
+
 
 function validateImportedData(value: unknown): ImportedData {
   if (!value || typeof value !== 'object') {
@@ -130,6 +159,16 @@ function validateImportedData(value: unknown): ImportedData {
   }
 
   const imported = data as unknown as ImportedData;
+  const legacyStatusMap: Record<string, Task['status']> = {
+    Todo: 'TODO',
+    'In Progress': 'DOING',
+    Done: 'DONE',
+  };
+  imported.tasks = imported.tasks.map((task) => ({
+    ...task,
+    status: legacyStatusMap[String(task.status)] || task.status,
+  }));
+  imported.keyResults = imported.keyResults.map(normalizeKeyResult);
   const principleIds = new Set(imported.principles.map((item) => item.id));
   const objectiveIds = new Set(imported.objectives.map((item) => item.id));
   const keyResultIds = new Set(imported.keyResults.map((item) => item.id));
@@ -143,6 +182,11 @@ function validateImportedData(value: unknown): ImportedData {
   }
   if (imported.tasks.some((item) => !sprintIds.has(item.sprintId) || !keyResultIds.has(item.keyResultId))) {
     throw new Error('В данных есть задача с несуществующим спринтом или ключевым результатом.');
+  }
+
+  const validTaskStatuses = ['TODO', 'DOING', 'DONE', 'TO DISCUSS'];
+  if (imported.tasks.some((item) => !validTaskStatuses.includes(item.status))) {
+    throw new Error('В данных есть задача с неизвестным статусом.');
   }
 
   return imported;
@@ -179,24 +223,34 @@ export const useAppStore = create<AppState>()(
           ),
         })),
 
+      updateKeyResultStatus: (id, status) =>
+        set((state) => ({
+          keyResults: state.keyResults.map((item) => {
+            if (item.id !== id) return item;
+            if (status === 'Завершен') {
+              return normalizeKeyResult({ ...item, currentValue: item.targetValue, status });
+            }
+            // Не допускаем противоречия: достигнутая цель не может иметь незавершённый статус.
+            if (getProgressPercent(item.currentValue, item.targetValue) >= 100) {
+              return normalizeKeyResult(item);
+            }
+            return { ...item, status };
+          }),
+        })),
+
       updateKeyResultValue: (id, newValue) =>
-        set((state) => {
-          const keyResult = state.keyResults.find((item) => item.id === id);
-          if (!keyResult || !Number.isFinite(newValue) || newValue < 0) return state;
-
-          const progressPercent =
-            keyResult.targetValue > 0
-              ? Math.min(100, Math.round((newValue / keyResult.targetValue) * 100))
-              : 0;
-
-          return {
-            keyResults: state.keyResults.map((item) =>
-              item.id === id
-                ? { ...item, currentValue: newValue, progressPercent }
-                : item
-            ),
-          };
-        }),
+        set((state) => ({
+          keyResults: state.keyResults.map((item) => {
+            if (item.id !== id || !Number.isFinite(newValue) || newValue < 0) return item;
+            const progressPercent = getProgressPercent(newValue, item.targetValue);
+            const status: KeyResultStatus = progressPercent >= 100
+              ? 'Завершен'
+              : item.status === 'Завершен'
+                ? 'В работе'
+                : item.status || (progressPercent > 0 ? 'В работе' : 'Ожидает');
+            return normalizeKeyResult({ ...item, currentValue: newValue, progressPercent, status });
+          }),
+        })),
 
       exportData: () => {
         const state = get();
@@ -235,6 +289,30 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'okr-tree-storage',
+      version: 3,
+      migrate: (persistedState, version) => {
+        if (version < 3 && persistedState && typeof persistedState === 'object') {
+          const legacy = persistedState as Partial<AppState>;
+          const statusMap: Record<string, Task['status']> = {
+            Todo: 'TODO',
+            'In Progress': 'DOING',
+            Done: 'DONE',
+          };
+          return {
+            ...legacy,
+            tasks: Array.isArray(legacy.tasks)
+              ? legacy.tasks.map((task) => ({
+                  ...task,
+                  status: statusMap[String(task.status)] || task.status,
+                }))
+              : [],
+            keyResults: Array.isArray(legacy.keyResults)
+              ? legacy.keyResults.map(normalizeKeyResult)
+              : [],
+          };
+        }
+        return persistedState as AppState;
+      },
     }
   )
 );

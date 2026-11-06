@@ -13,13 +13,14 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ sprintId }) => {
   const tasks = useAppStore((s) => s.tasks).filter(t => t.sprintId === sprintId);
 
   const columns: { status: TaskStatus; title: string; accentColor: string }[] = [
-    { status: 'Todo', title: 'К выполнению', accentColor: 'bg-gray-400' },
-    { status: 'In Progress', title: 'В работе', accentColor: 'bg-blue-500' },
-    { status: 'Done', title: 'Готово', accentColor: 'bg-emerald-500' },
+    { status: 'TODO', title: 'К выполнению', accentColor: 'bg-gray-400' },
+    { status: 'DOING', title: 'В работе', accentColor: 'bg-blue-500' },
+    { status: 'DONE', title: 'Готово', accentColor: 'bg-emerald-500' },
+    { status: 'TO DISCUSS', title: 'Обсудить', accentColor: 'bg-amber-500' },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
       {columns.map((col) => (
         <KanbanColumn
           key={col.status}

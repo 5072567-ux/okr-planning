@@ -1,4 +1,3 @@
-// components/ui/Badge.tsx
 import React from 'react';
 import { ImpactLevel, EffortLevel, TaskStatus, EntityStatus } from '@/types';
 
@@ -8,41 +7,20 @@ interface BadgeProps {
 }
 
 const Badge: React.FC<BadgeProps> = ({ type, value }) => {
-  const getStyles = () => {
-    switch (type) {
-      case 'impact':
-        switch (value as ImpactLevel) {
-          case 'High': return 'bg-rose-100 text-rose-800 border-rose-200';
-          case 'Medium': return 'bg-amber-100 text-amber-800 border-amber-200';
-          case 'Low': return 'bg-slate-100 text-slate-800 border-slate-200';
-        }
-      case 'effort':
-        switch (value as EffortLevel) {
-          case 'Large': return 'bg-purple-100 text-purple-800 border-purple-200';
-          case 'Medium': return 'bg-blue-100 text-blue-800 border-blue-200';
-          case 'Small': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-        }
-      case 'status':
-        switch (value as TaskStatus | EntityStatus) {
-          case 'Done':
-          case 'Completed': return 'bg-green-100 text-green-800 border-green-200';
-          case 'In Progress':
-          case 'Active': return 'bg-blue-100 text-blue-800 border-blue-200';
-          case 'Todo':
-          case 'Archived': return 'bg-gray-100 text-gray-800 border-gray-200';
-        }
-      case 'principle':
-        return 'bg-indigo-50 text-indigo-700 border-indigo-200 font-medium';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getStyles()}`}>
-      {value}
-    </span>
-  );
+  let styles = 'border-[#e3e8e5] bg-[#f3f5f3] text-[#5e6c70]';
+  if (type === 'principle') styles = 'border-[#dce5e8] bg-[#edf3f4] text-[#31576a]';
+  if (type === 'impact') {
+    styles = value === 'High' ? 'border-[#ead8d4] bg-[#f8efed] text-[#96584f]' : value === 'Medium' ? 'border-[#eadfc9] bg-[#f8f3e9] text-[#92703a]' : 'border-[#e3e8e5] bg-[#f3f5f3] text-[#687579]';
+  }
+  if (type === 'effort') {
+    styles = value === 'Large' ? 'border-[#e2dbea] bg-[#f3eff7] text-[#715b87]' : value === 'Medium' ? 'border-[#dce5e8] bg-[#edf3f4] text-[#426576]' : 'border-[#dce7df] bg-[#eef5f0] text-[#557765]';
+  }
+  if (type === 'status') {
+    styles = ['DONE', 'Done', 'Completed'].includes(value) ? 'border-[#dce7df] bg-[#eef5f0] text-[#557765]' :
+      ['DOING', 'TO DISCUSS', 'In Progress', 'Active'].includes(value) ? 'border-[#dce5e8] bg-[#edf3f4] text-[#426576]' :
+      'border-[#e3e8e5] bg-[#f3f5f3] text-[#687579]';
+  }
+  return <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-medium leading-none ${styles}`}>{value}</span>;
 };
 
 export default Badge;
