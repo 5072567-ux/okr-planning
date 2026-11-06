@@ -11,9 +11,10 @@ import { Principle } from '@/types';
 interface PrincipleCardProps {
   principle: Principle;
   onAddObjective: (principleId: string) => void;
+  onAddKeyResult: (objectiveId: string) => void;
 }
 
-const PrincipleCard: React.FC<PrincipleCardProps> = ({ principle, onAddObjective }) => {
+const PrincipleCard: React.FC<PrincipleCardProps> = ({ principle, onAddObjective, onAddKeyResult }) => {
   const objectives = useAppStore((s) => s.objectives).filter(o => o.principleId === principle.id);
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -80,7 +81,7 @@ const PrincipleCard: React.FC<PrincipleCardProps> = ({ principle, onAddObjective
               У этого принципа пока нет целей
             </p>
           ) : (
-            objectives.map(obj => <ObjectiveCard key={obj.id} objective={obj} />)
+            objectives.map(obj => <ObjectiveCard key={obj.id} objective={obj} onAddKeyResult={onAddKeyResult} />)
           )}
         </div>
       )}

@@ -2,10 +2,16 @@
 const nextConfig = {
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Отключаем отслеживание системных папок Windows, чтобы избежать ошибки EINVAL
       config.watchOptions = {
-        ...config.watchOptions,
-        ignored: ['D:\\System Volume Information', '**/node_modules/**']
+        ignored: [
+          '**/node_modules/**',
+          '**/.git/**',
+          '**/.next/**',
+          'D:\\System Volume Information',
+          'D:\\$RECYCLE.BIN',
+          'D:\\pagefile.sys',
+          'D:\\swapfile.sys'
+        ]
       };
     }
     return config;

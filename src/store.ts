@@ -1,57 +1,57 @@
 // store.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { v4 as uuidv4 } from 'uuid'; // Убедитесь, что установлен uuid: npm i uuid
-import { AppState, Task, KeyResult, EntityStatus } from './types';
+import { v4 as uuidv4 } from 'uuid';
+import type { AppState, Principle, Objective, KeyResult, Sprint, Task } from './types';
 
-// --- МОКОВЫЕ ДАННЫЕ (Абстрактные, профессионально релевантные) ---
-const mockPrinciples = [
+// Демо-данные. Идентификаторы связаны между собой: Principle -> Objective -> KeyResult -> Task.
+const mockPrinciples: Principle[] = [
   {
     id: 'p1',
     name: 'Системная передача знаний',
     category: 'Самореализация',
-    description: 'Я структурирую свой опыт и делаю его доступным для масштабирования.'
+    description: 'Я структурирую свой опыт и делаю его доступным для масштабирования.',
   },
   {
     id: 'p2',
     name: 'Финансовая устойчивость',
     category: 'Финансы',
-    description: 'Доходы системно превышают расходы, формируя инвестиционный портфель.'
-  }
+    description: 'Доходы системно превышают расходы, формируя финансовую устойчивость.',
+  },
 ];
 
-const mockObjectives = [
+const mockObjectives: Objective[] = [
   {
     id: 'o1',
-    title: 'Создать и опубликовать фундаментальное методическое пособие',
+    title: 'Подготовить рукопись практического пособия',
     timeframe: '2026 Q1-Q2',
     status: 'Active',
-    driverFact: 'Накоплен уникальный практический опыт работы с целевой аудиторией, но он фрагментирован.',
-    driverNeed: 'Систематизировать знания в единый продукт для повышения экспертности и охвата.',
-    principleId: 'p1'
+    driverFact: 'Материалы и экспертный опыт пока не собраны в единую рукопись.',
+    driverNeed: 'Создать структурированную рукопись, готовую к редактуре.',
+    principleId: 'p1',
   },
   {
     id: 'o2',
     title: 'Диверсифицировать источники дохода и сформировать капитал',
     timeframe: '2026 Q1-Q4',
     status: 'Active',
-    driverFact: 'Основной доход зависит от одного вида активности (консультации).',
-    driverNeed: 'Создать пассивный или полупассивный источник дохода через цифровые продукты.',
-    principleId: 'p2'
-  }
+    driverFact: 'Основной доход зависит от одного вида активности — консультаций.',
+    driverNeed: 'Создать дополнительный источник дохода через цифровой продукт.',
+    principleId: 'p2',
+  },
 ];
 
-const mockKeyResults = [
+const mockKeyResults: KeyResult[] = [
   {
     id: 'kr1',
-    title: 'Написано и вычитано черновиков глав',
+    title: 'Подготовлено и вычитано черновиков глав',
     objectiveId: 'o1',
     targetValue: 5,
     currentValue: 2,
     unit: 'глав',
     startDate: '2026-01-01',
     endDate: '2026-06-30',
-    progressPercent: 40
+    progressPercent: 40,
   },
   {
     id: 'kr2',
@@ -62,19 +62,19 @@ const mockKeyResults = [
     unit: 'продукт',
     startDate: '2026-02-01',
     endDate: '2026-04-30',
-    progressPercent: 0
-  }
+    progressPercent: 0,
+  },
 ];
 
-const mockSprints = [
+const mockSprints: Sprint[] = [
   {
     id: 's1',
-    name: 'Спринт 1: Структура и Глава 1',
+    name: 'Спринт 1: Структура и глава 1',
     startDate: '2026-01-15',
     endDate: '2026-01-28',
-    outcomeDescription: 'Утвержденное детальное оглавление и готовый черновик первой главы пособия.',
-    status: 'Active'
-  }
+    outcomeDescription: 'Утверждённое оглавление и черновик первой главы пособия.',
+    status: 'Active',
+  },
 ];
 
 const mockTasks: Task[] = [
@@ -87,7 +87,7 @@ const mockTasks: Task[] = [
     impact: 'High',
     effort: 'Medium',
     pomodoroEstimate: 4,
-    pomodoroActual: 3
+    pomodoroActual: 3,
   },
   {
     id: 't2',
@@ -98,22 +98,56 @@ const mockTasks: Task[] = [
     impact: 'High',
     effort: 'Large',
     pomodoroEstimate: 8,
-    pomodoroActual: 2
+    pomodoroActual: 2,
   },
   {
     id: 't3',
-    title: 'Исследовать 3 платформы для хостинга цифрового продукта',
+    title: 'Исследовать 3 платформы для размещения цифрового продукта',
     sprintId: 's1',
     keyResultId: 'kr2',
     status: 'Todo',
     impact: 'Medium',
     effort: 'Small',
     pomodoroEstimate: 2,
-    pomodoroActual: 0
-  }
+    pomodoroActual: 0,
+  },
 ];
 
-// --- ZUSTAND STORE ---
+type ImportedData = Pick<AppState, 'principles' | 'objectives' | 'keyResults' | 'sprints' | 'tasks'>;
+
+function validateImportedData(value: unknown): ImportedData {
+  if (!value || typeof value !== 'object') {
+    throw new Error('Файл должен содержать JSON-объект.');
+  }
+
+  const data = value as Record<string, unknown>;
+  const keys = ['principles', 'objectives', 'keyResults', 'sprints', 'tasks'] as const;
+
+  for (const key of keys) {
+    if (!Array.isArray(data[key])) {
+      throw new Error(`В файле отсутствует корректный массив "${key}".`);
+    }
+  }
+
+  const imported = data as unknown as ImportedData;
+  const principleIds = new Set(imported.principles.map((item) => item.id));
+  const objectiveIds = new Set(imported.objectives.map((item) => item.id));
+  const keyResultIds = new Set(imported.keyResults.map((item) => item.id));
+  const sprintIds = new Set(imported.sprints.map((item) => item.id));
+
+  if (imported.objectives.some((item) => !principleIds.has(item.principleId))) {
+    throw new Error('В данных есть цель без существующего родительского принципа.');
+  }
+  if (imported.keyResults.some((item) => !objectiveIds.has(item.objectiveId))) {
+    throw new Error('В данных есть ключевой результат без существующей цели.');
+  }
+  if (imported.tasks.some((item) => !sprintIds.has(item.sprintId) || !keyResultIds.has(item.keyResultId))) {
+    throw new Error('В данных есть задача с несуществующим спринтом или ключевым результатом.');
+  }
+
+  return imported;
+}
+
 export const useAppStore = create<AppState>()(
   persist(
     (set, get) => ({
@@ -130,33 +164,36 @@ export const useAppStore = create<AppState>()(
 
       updateTask: (id, updates) =>
         set((state) => ({
-          tasks: state.tasks.map((t) => (t.id === id ? { ...t, ...updates } : t)),
+          tasks: state.tasks.map((task) => (task.id === id ? { ...task, ...updates } : task)),
         })),
 
       deleteTask: (id) =>
         set((state) => ({
-          tasks: state.tasks.filter((t) => t.id !== id),
+          tasks: state.tasks.filter((task) => task.id !== id),
         })),
 
       incrementPomodoro: (id) =>
         set((state) => ({
-          tasks: state.tasks.map((t) =>
-            t.id === id ? { ...t, pomodoroActual: t.pomodoroActual + 1 } : t
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, pomodoroActual: task.pomodoroActual + 1 } : task
           ),
         })),
 
       updateKeyResultValue: (id, newValue) =>
         set((state) => {
-          const kr = state.keyResults.find((k) => k.id === id);
-          if (!kr) return state;
-          
-          const newProgress = Math.min(100, Math.round((newValue / kr.targetValue) * 100));
-          
+          const keyResult = state.keyResults.find((item) => item.id === id);
+          if (!keyResult || !Number.isFinite(newValue) || newValue < 0) return state;
+
+          const progressPercent =
+            keyResult.targetValue > 0
+              ? Math.min(100, Math.round((newValue / keyResult.targetValue) * 100))
+              : 0;
+
           return {
-            keyResults: state.keyResults.map((k) =>
-              k.id === id
-                ? { ...k, currentValue: newValue, progressPercent: newProgress }
-                : k
+            keyResults: state.keyResults.map((item) =>
+              item.id === id
+                ? { ...item, currentValue: newValue, progressPercent }
+                : item
             ),
           };
         }),
@@ -177,18 +214,14 @@ export const useAppStore = create<AppState>()(
       },
 
       importData: (jsonString) => {
-        try {
-          const data = JSON.parse(jsonString);
-          set({
-            principles: data.principles || [],
-            objectives: data.objectives || [],
-            keyResults: data.keyResults || [],
-            sprints: data.sprints || [],
-            tasks: data.tasks || [],
-          });
-        } catch (e) {
-          console.error('Ошибка импорта данных:', e);
-        }
+        const data = validateImportedData(JSON.parse(jsonString));
+        set({
+          principles: data.principles,
+          objectives: data.objectives,
+          keyResults: data.keyResults,
+          sprints: data.sprints,
+          tasks: data.tasks,
+        });
       },
 
       resetToMockData: () =>
@@ -201,7 +234,7 @@ export const useAppStore = create<AppState>()(
         }),
     }),
     {
-      name: 'okr-tree-storage', // Ключ в localStorage
+      name: 'okr-tree-storage',
     }
   )
 );

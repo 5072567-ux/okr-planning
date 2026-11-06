@@ -1,7 +1,7 @@
 // components/dashboard/ObjectiveCard.tsx
 'use client';
 import React, { useState, useMemo } from 'react';
-import { Target, ChevronDown, ChevronRight, Lightbulb, TrendingUp } from 'lucide-react';
+import { Target, ChevronDown, ChevronRight, Lightbulb, TrendingUp, Plus } from 'lucide-react';
 import Badge from '@/components/ui/Badge';
 import ProgressBar from '@/components/ui/ProgressBar';
 import KeyResultItem from './KeyResultItem';
@@ -10,9 +10,10 @@ import { Objective } from '@/types';
 
 interface ObjectiveCardProps {
   objective: Objective;
+  onAddKeyResult: (objectiveId: string) => void;
 }
 
-const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective }) => {
+const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective, onAddKeyResult }) => {
   const keyResults = useAppStore((s) => s.keyResults).filter(kr => kr.objectiveId === objective.id);
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -84,6 +85,12 @@ const ObjectiveCard: React.FC<ObjectiveCardProps> = ({ objective }) => {
       {/* Раскрытые Key Results */}
       {isExpanded && (
         <div className="mt-3 ml-9 space-y-2">
+          <button
+            onClick={() => onAddKeyResult(objective.id)}
+            className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-800"
+          >
+            <Plus size={14} /> Добавить ключевой результат
+          </button>
           {keyResults.length === 0 ? (
             <p className="text-sm text-gray-400 italic py-2">Нет ключевых результатов. Добавьте первый.</p>
           ) : (

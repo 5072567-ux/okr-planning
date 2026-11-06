@@ -1,8 +1,6 @@
-// components/layout/Header.tsx
 'use client';
 import React, { useState, useRef } from 'react';
 import { TreePine, Zap, BarChart3, Download, Upload, RotateCcw, Menu, X } from 'lucide-react';
-import Button from '@/components/ui/Button';
 import { useAppStore } from '@/store';
 
 export type ViewType = 'dashboard' | 'sprints' | 'analytics';
@@ -36,7 +34,6 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
@@ -48,7 +45,6 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
       }
     };
     reader.readAsText(file);
-    
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -69,20 +65,16 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
     <header className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Логотип */}
           <div className="flex items-center gap-2">
             <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
               <TreePine size={22} className="text-white" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-900 leading-tight">OKR Tree</h1>
-              <p className="text-xs text-gray-500 leading-tight hidden sm:block">
-                Система целей и спринтов
-              </p>
+              <p className="text-xs text-gray-500 leading-tight hidden sm:block">Система целей и спринтов</p>
             </div>
           </div>
 
-          {/* Навигация (десктоп) */}
           <nav className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
               <button
@@ -100,29 +92,43 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             ))}
           </nav>
 
-          {/* Кнопки управления данными (десктоп) */}
           <div className="hidden md:flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={handleExport} title="Экспорт данных">
-              <Download size={16} className="mr-1" />
-              Экспорт
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => fileInputRef.current?.click()} title="Импорт данных">
-              <Upload size={16} className="mr-1" />
-              Импорт
-            </Button>
-            <Button variant="ghost" size="sm" onClick={handleReset} title="Сброс к демо-данным">
+            <button onClick={handleExport} className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">
+              <Download size={16} /> Экспорт
+            </button>
+            <button onClick={() => fileInputRef.current?.click()} className="flex items-center gap-1 px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-md">
+              <Upload size={16} /> Импорт
+            </button>
+            <button onClick={handleReset} className="p-1.5 text-gray-600 hover:bg-gray-100 rounded-md" title="Сброс">
               <RotateCcw size={16} />
-            </Button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleImport}
-              className="hidden"
-            />
+            </button>
+            <input ref={fileInputRef} type="file" accept=".json" onChange={handleImport} className="hidden" />
           </div>
 
-          {/* Мобильное меню */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 text-gray-600 hover
+          <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="md:hidden p-2 text-gray-600 hover:bg-gray-100 rounded-lg">
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {isMenuOpen && (
+          <div className="md:hidden py-3 border-t border-gray-100 space-y-1">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => { onViewChange(item.id); setIsMenuOpen(false); }}
+                className={`flex items-center gap-2 w-full px-3 py-2 text-sm font-medium ${
+                  currentView === item.id ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600'
+                }`}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};
+
+export default Header;
